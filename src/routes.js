@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import WeatherPage from './pages/WeatherPage';
+import TrafficPage from './pages/TrafficPage';
 
 // ----------------------------------------------------------------------
 
@@ -25,6 +26,7 @@ export default function Router() {
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'weather', element: <WeatherPage />},
+        { path: 'traffic', element: <TrafficPage />},
       ],
     },
     {

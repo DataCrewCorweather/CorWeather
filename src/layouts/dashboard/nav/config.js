@@ -41,6 +41,11 @@ const navConfig = [
     path: '/dashboard/weather',
     icon: icon('ic_weather'),
   },
+  {
+    title: 'traffic',
+    path: '/dashboard/traffic',
+    icon: icon('ic_traffic'),
+  },
 ];
 
 export default navConfig;
