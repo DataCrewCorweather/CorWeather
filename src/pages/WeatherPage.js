@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
+import React, { useState, useEffect } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -7,7 +8,7 @@ import { Grid, Container, Typography } from '@mui/material';
 // import Iconify from '../components/iconify';
 import { faCloud, faCloudRain, faSun, faSnowflake } from '@fortawesome/free-solid-svg-icons'
 // sections
-
+import axios from "axios";
 import {
   AppTasks,
   AppNewsUpdate,
@@ -20,10 +21,63 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
+axios.defaults.withCredentials = true;
+const headers = { withCredentials: true };
 // ----------------------------------------------------------------------
 
+
 export default function WeatherPage() {
-  const theme = useTheme();
+  const [temperatures, setTemperatures] = useState({});
+  const [colors, setColors] = useState({});
+
+  const cities = ['서울', '부산', '인천', '대구', '대전', '광주', '울산', '수원', '원주', '청주', '홍성', '전주', '목포', '포항', '진주', '제주'];
+  useEffect(() => {
+    
+
+    const fetchTemperatures = async () => {
+      try {
+        const temperaturePromises = cities.map(city =>
+          axios.post("http://localhost:4000/weather/getWeatherList", {
+            headers,
+            name: city,
+            date: "2022-05-21"
+          })
+        );
+        const temperatureResponses = await Promise.all(temperaturePromises);
+        const temperatures = {};
+        const colors = {};
+
+        temperatureResponses.forEach((response, index) => {
+          const city = cities[index];
+          const weatherData = response.data.list;
+          if (weatherData && weatherData.length > 0) {
+            const temp = weatherData[0].temp;
+            temperatures[city] = temp;
+            if(temp > 20){
+              colors[city] = "warning";
+            }
+            else{
+              colors[city] = "info"
+            }
+          } else {
+            temperatures[city] = 'N/A';
+            colors[city] = 'N/A';
+          }
+        });
+
+        setTemperatures(temperatures);
+        setColors(colors);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchTemperatures();
+  }, []);
+
+
+
+
 
   return (
     <>
@@ -37,69 +91,16 @@ export default function WeatherPage() {
         </Typography>
         {/* 현재 날씨를 표현 */}
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="서울" total={25.7} icon={faCloud} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="부산" total={1352831} color="info" icon={faCloudRain} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="인천" total={1723315} color="warning" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="대구" total={234} color="error" icon={faSnowflake} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="대전" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="광주" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="울산" total={234} color="error" icon={faSun} />
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경기도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="강원도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="충청북도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="충청남도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="전라북도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="전라남도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경상북도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경상남도" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="제주도" total={234} color="error" icon={faSun} />
-          </Grid>
+          {cities.map(city => (
+            <Grid item xs={12} sm={6} md={3} key={city}>
+              <AppWidgetSummary
+                title={city}
+                total={temperatures[city] || 'N/A'}
+                color= {colors[city] || 'info'}
+                icon={faCloud}
+              />
+            </Grid>
+          ))}
 
 
           {/* 전국 평균 월별 최고 최저 기운 계산해서 차트로 표현 */}
@@ -153,9 +154,9 @@ export default function WeatherPage() {
 
               ]}
               chartColors={[
-                theme.palette.warning.main,
-                theme.palette.info.main,
-                theme.palette.primary.main,
+                // theme.palette.warning.main,
+                // theme.palette.info.main,
+                // theme.palette.primary.main,
     
               ]}
             />
