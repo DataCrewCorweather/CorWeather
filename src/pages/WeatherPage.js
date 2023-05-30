@@ -29,7 +29,26 @@ const headers = { withCredentials: true };
 export default function WeatherPage() {
   const [temperatures, setTemperatures] = useState({});
   const [colors, setColors] = useState({});
+  const [weathers, setWeathers] = useState({});
+  const [rainAvgs, setRainAvg] = useState({});
+  const [minTemp, setMinTemp] = useState({});
+  const [maxTemp, setMaxTemp] = useState({});
+  const [cnt, setCnt] = useState({});
 
+  const days = [
+    '2022-07',
+    '2022-08',
+    '2022-09',
+    '2022-10',
+    '2022-11',
+    '2022-12',
+    '2023-01',
+    '2023-02',
+    '2023-03',
+    '2023-04',
+    '2023-05',
+  ];
+  
   const cities = ['서울', '부산', '인천', '대구', '대전', '광주', '울산', '수원', '원주', '청주', '홍성', '전주', '목포', '포항', '진주', '제주'];
   useEffect(() => {
     
@@ -46,6 +65,7 @@ export default function WeatherPage() {
         const temperatureResponses = await Promise.all(temperaturePromises);
         const temperatures = {};
         const colors = {};
+        const weathers = {};
 
         temperatureResponses.forEach((response, index) => {
           const city = cities[index];
@@ -53,29 +73,169 @@ export default function WeatherPage() {
           if (weatherData && weatherData.length > 0) {
             const temp = weatherData[0].temp;
             temperatures[city] = temp;
-            if(temp > 20){
-              colors[city] = "warning";
+
+            const rain = weatherData[0].day_rain;
+            console.log(rain);
+            if(rain == null){
+              weathers[city] = 'null';
             }
             else{
-              colors[city] = "info"
+              weathers[city] = rain;
+            }
+
+            
+            if(temp > 33){
+              colors[city] = "error";
+            }
+
+
+            if(rain != null){
+              weathers[city] = faCloudRain;
+              colors[city] = "info";
+            }
+            else{
+              weathers[city] = faSun;
+              colors[city] = "warning";
             }
           } else {
             temperatures[city] = 'N/A';
-            colors[city] = 'N/A';
+            colors[city] = 'warning';
+            weathers[city] = faSun;
           }
         });
 
         setTemperatures(temperatures);
         setColors(colors);
+        setWeathers(weathers);
       } catch (error) {
         console.error(error);
       }
     };
 
+    const fetchRain = async () => {
+      try {
+        const rainPromises = cities.map(city =>
+          axios.post("http://localhost:4000/weather/getDayrain", {
+            headers,
+            name: city,
+            date: "2022-05-21"
+          })
+        );
+        const rainResponses = await Promise.all(rainPromises);
+        const rainAvgs = {};
+
+
+        rainResponses.forEach((response, index) => {
+          const city = cities[index];
+          const rainData = response.data.list;
+          if (rainData && rainData.length > 0) {
+            const avg = rainData[0].avg;
+            console.log(avg)
+
+            rainAvgs[city] = avg;
+          } 
+        });
+
+        setRainAvg(rainAvgs);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
+    const fetchMinTemp = async () => {
+      try {
+        const minPromises = days.map(day =>
+          axios.post("http://localhost:4000/weather/getMinTemp", {
+            headers,
+            date: day
+          })
+        );
+        const minResponses = await Promise.all(minPromises);
+        const minTemp = {};
+
+
+        minResponses.forEach((response, index) => {
+          const day = days[index];
+          const minData = response.data.list;
+          if (minData && minData.length > 0) {
+            const min = minData[0].minTemp.toFixed(2);
+            console.log(min)
+
+            minTemp[day] = min;
+          } 
+        });
+
+        setMinTemp(minTemp);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchMaxTemp = async () => {
+      try {
+        const maxPromises = days.map(day =>
+          axios.post("http://localhost:4000/weather/getMaxTemp", {
+            headers,
+            date: day
+          })
+        );
+        const maxResponses = await Promise.all(maxPromises);
+        const maxTemp = {};
+
+
+        maxResponses.forEach((response, index) => {
+          const day = days[index];
+          const maxData = response.data.list;
+          if (maxData && maxData.length > 0) {
+            const max = maxData[0].maxTemp.toFixed(2);
+            console.log(max)
+
+            maxTemp[day] = max;
+          } 
+        });
+
+        setMaxTemp(maxTemp);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchCntWeather = async () => {
+      try {
+        const cntResponse = await axios.post("http://localhost:4000/weather/getWeatherRate", {
+          headers,
+          date: '2023-05'
+        });
+        const cntData = cntResponse.data.list;
+        console.log(cntData);
+        const cnt = {};
+    
+        if (cntData && cntData.length > 0) {
+          const count1 = cntData[0].count;
+          console.log("Count 1:", count1);
+          cnt[0] = count1;
+    
+          const count2 = cntData[1].count;
+          console.log("Count 2:", count2);
+          cnt[1] = count2;
+        }
+    
+        setCnt(cnt);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
     fetchTemperatures();
+    fetchRain();
+    fetchMinTemp();
+    fetchMaxTemp();
+    fetchCntWeather();
   }, []);
 
-
+  console.log(cnt)
 
 
 
@@ -97,7 +257,7 @@ export default function WeatherPage() {
                 title={city}
                 total={temperatures[city] || 'N/A'}
                 color= {colors[city] || 'info'}
-                icon={faCloud}
+                icon={weathers[city] || faSun}
               />
             </Grid>
           ))}
@@ -132,13 +292,13 @@ export default function WeatherPage() {
                   name: '최저',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: days.map(day => minTemp[day]),
                 },
                 {
                   name: '최고',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data:  days.map(day => maxTemp[day]),
                 },
               ]}
             />
@@ -148,9 +308,9 @@ export default function WeatherPage() {
             <AppCurrentVisits
               title="5월 날씨 비중"
               chartData={[
-                { label: '비', value: 4344 },
-                { label: '맑음', value: 5435 },
-                { label: '눈', value: 1443 },
+                { label: '비', value: cnt[0] || 'N/A' },
+                { label: '맑음', value: cnt[1] || 'N/A' },
+                { label: '눈', value: 0 },
 
               ]}
               chartColors={[
@@ -166,18 +326,7 @@ export default function WeatherPage() {
             <AppConversionRates
               title="5월 강수량"
               subheader=""
-              chartData={[
-                { label: '대전', value: 400 },
-                { label: '충북', value: 430 },
-                { label: '서울', value: 448 },
-                { label: '강원', value: 470 },
-                { label: '제주', value: 540 },
-                { label: '충남', value: 580 },
-                { label: '전북', value: 690 },
-                { label: '전남', value: 1100 },
-                { label: '경기', value: 1200 },
-                { label: '인천', value: 1380 },
-              ]}
+              chartData={cities.map(city => ({ label: city, value: rainAvgs[city] }))}
             />
           </Grid>
 
