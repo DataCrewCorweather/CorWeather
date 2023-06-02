@@ -11,6 +11,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import WeatherPage from './pages/WeatherPage';
 import TrafficPage from './pages/TrafficPage';
+import TrafficWeatherPage from './pages/TrafficWeatherPage';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,7 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'weather', element: <WeatherPage />},
         { path: 'traffic', element: <TrafficPage />},
+        { path: 'trafficweather', element: <TrafficWeatherPage />},
       ],
     },
     {

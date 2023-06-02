@@ -31,22 +31,19 @@ export default function TrafficPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          교통량 통계입니다
+          교통량 통계
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} lg={8}>
-            <AppWidgetSummary title="Map" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid>
+          
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="시간대별 고속도로 통행량"
               chartData={[
-                { label: '1종 대수', value: 4344 },
-                { label: '2종 대수', value: 5435 },
-                { label: '3종 대수', value: 1443 },
-                { label: '4종 대수', value: 4443 },
-                { label: '5종 대수', value: 343 },
+                { label: '0시~6시', value: 4344 },
+                { label: '6시~12시', value: 5435 },
+                { label: '12시~18시', value: 1443 },
+                { label: '18시~24시', value: 4443 },
               ]}
               chartColors={[
                 theme.palette.primary.main,
@@ -56,92 +53,103 @@ export default function TrafficPage() {
               ]}
             />
           </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline
-              title="Order Timeline"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  '1983, orders, $4220',
-                  '12 Invoices have been paid',
-                  'Order #37745 from September',
-                  'New order placed #XF-2356',
-                  'New order placed #XF-2346',
-                ][index],
-                type: `order${index + 1}`,
-                time: faker.date.past(),
-              }))}
+
+          <Grid item xs={12} md={6} lg={8}>
+            <AppConversionRates
+              title="요일별 고속도로 통행량 평균"
+              subheader="2022.05.07~2023.5.28"
+              chartData={[
+                { label: '월', value: 400 },
+                { label: '화', value: 430 },
+                { label: '수', value: 448 },
+                { label: '목', value: 470 },
+                { label: '금', value: 540 },
+                { label: '토', value: 580 },
+                { label: '일', value: 690 },
+              ]}
             />
           </Grid>
+
+          <Grid item xs={12} md={8} lg={12}>
+            <AppConversionRates
+              title="고속도로 노선별 일일 평균 통행량"
+              subheader="2022.05.07~2023.5.28"
+              chartData={[
+                { label: '경부고속도로', value: 400 },
+                { label: '서해안고속도로', value: 430 },
+                { label: '평택시흥고속도로', value: 448 },
+                { label: '평택화성고속도로', value: 470 },
+                { label: '구리포천선', value: 540 },
+                { label: '중부고속도로', value: 580 },
+                { label: '제2중부고속도로', value: 690 },
+                { label: '평택제천고속도로', value: 690 },
+                { label: '중부내륙고속도로', value: 690 },
+                { label: '영동고속도로', value: 690 },
+                { label: '광주원주선', value: 690 },
+                { label: '서울양양고속도로', value: 690 },
+                { label: '수도권제1순환선', value: 690 },
+                { label: '제2경인고속도로', value: 690 },
+                { label: '인천대교고속도로', value: 690 },
+                { label: '경인고속도로', value: 690 },
+                { label: '인천국제공항고속도로', value: 690 },
+                { label: '용인서울고속도로', value: 690 },
+                { label: '봉담동탄고속도로', value: 690 },
+                { label: '제2외곽선', value: 690 },
+              ]}
+            />
+          </Grid>
+          
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Road Visits"
-              subheader="(+43%) than last year"
+              title="월별 지하철 이용량"
+              subheader=""
               chartLabels={[
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
+                '07/01/2022',
+                '08/01/2022',
+                '09/01/2022',
+                '10/01/2022',
+                '11/01/2022',
+                '12/01/2022',
+                '01/01/2023',
+                '02/01/2023',
+                '03/01/2023',
+                '04/01/2023',
               ]}
               chartData={[
                 {
-                  name: '교통량',
+                  name: '승차평균',
                   type: 'column',
                   fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22],
                 },
-                {
-                  name: '경부선',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: '영동선',
-                  type: 'line',
-                  fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
-                },
+                
               ]}
             />
           </Grid>
-          <Grid item xs={12} sm={6} lg={8}>
-            <AppWidgetSummary title="Map" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid>
+
           <Grid item xs={12} md={6} lg={4}>
-            <AppTrafficBySite
-              title="Traffic by Site"
-              list={[
-                {
-                  name: '경부선',
-                  value: 323234,
-                  icon: <Iconify icon={'eva:facebook-fill'} color="#1877F2" width={32} />,
-                },
-                {
-                  name: '중부내륙선',
-                  value: 341212,
-                  icon: <Iconify icon={'eva:google-fill'} color="#DF3E30" width={32} />,
-                },
-                {
-                  name: '영동선',
-                  value: 411213,
-                  icon: <Iconify icon={'eva:linkedin-fill'} color="#006097" width={32} />,
-                },
-                {
-                  name: '경인선',
-                  value: 443232,
-                  icon: <Iconify icon={'eva:twitter-fill'} color="#1C9CEA" width={32} />,
-                },
+            <AppCurrentVisits
+              title="호선별 5월 이용객 수 평균"
+              chartData={[
+                { label: '1호선', value: 4344 },
+                { label: '2호선', value: 5435 },
+                { label: '3호선', value: 1443 },
+                { label: '4호선', value: 4443 },
+                { label: '5호선', value: 4443 },
+                { label: '6호선', value: 4443 },
+                { label: '7호선', value: 4443 },
+                { label: '8호선', value: 4443 },
+                { label: '9호선', value: 4443 },
+              ]}
+              chartColors={[
+                theme.palette.primary.main,
+                theme.palette.info.main,
+                theme.palette.warning.main,
+                theme.palette.error.main,
               ]}
             />
           </Grid>
+        
         </Grid>
       </Container>
     </>
