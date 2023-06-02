@@ -24,6 +24,7 @@ export default function TrafficWeatherPage() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           날씨에 따른 예상 고속도로 통행량
         </Typography>
+        {/* 날씨 아이콘: 예상 날씨(발표전날 수정), total -> 예상 이용량  */}
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
@@ -105,6 +106,7 @@ export default function TrafficWeatherPage() {
         
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
+            // 날씨교통 서울시 데이터 이용 -> 각 날씨별 평균 통행속도
               title="날씨별 통행속도"
               subheader=""
               chartData={[
@@ -118,6 +120,7 @@ export default function TrafficWeatherPage() {
 
 
           <Grid item xs={12} md={6} lg={4}>
+            {/* 날씨교통 데이터를 기반으로한 서울 예상 통행속도 */}
             <AppWidgetSummary title="내일 서울의 예상 통행속도" total={25.7} icon={faCloud} />
           </Grid>
 
@@ -125,6 +128,7 @@ export default function TrafficWeatherPage() {
 
         <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
+            // 서울시 날씨 교통 데이터 이용
               title="서울시 월별 날씨, 통행량 평균"
               subheader=""
               chartLabels={[
