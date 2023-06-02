@@ -1,27 +1,18 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
-// @mui
-import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 
 // components
 import { faCloud, faCloudRain, faSun, faSnowflake } from '@fortawesome/free-solid-svg-icons'
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
-  AppCurrentVisits,
   AppWebsiteVisits,
   AppWidgetSummary,
-  AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
 
 export default function TrafficWeatherPage() {
-  const theme = useTheme();
 
   return (
     <>
@@ -31,72 +22,85 @@ export default function TrafficWeatherPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          날씨에 따른 예상 고속도로 통행량
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="서울" total={25.7} icon={faCloud} />
+            <AppWidgetSummary title="경부고속도로" total={25.7} icon={faCloud} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="부산" total={1352831} color="info" icon={faCloudRain} />
+            <AppWidgetSummary title="서해안고속도로" total={1352831} color="info" icon={faCloudRain} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="인천" total={1723315} color="warning" icon={faSun} />
+            <AppWidgetSummary title="평택시흥고속도로" total={1723315} color="warning" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="대구" total={234} color="error" icon={faSnowflake} />
+            <AppWidgetSummary title="평택화성고속도로" total={234} color="error" icon={faSnowflake} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="대전" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="구리포천선" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="광주" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="중부고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="울산" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="제2중부고속도로" total={234} color="error" icon={faSun} />
           </Grid>
           
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경기도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="평택제천고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="강원도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="중부내륙고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="충청북도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="영동고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="충청남도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="광주원주선" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="전라북도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="서울양양고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="전라남도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="수도권제1순환선" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경상북도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="제2경인고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경상남도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="인천대교고속도로" total={234} color="error" icon={faSun} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="제주도" total={234} color="error" icon={faSun} />
+            <AppWidgetSummary title="경인고속도로" total={234} color="error" icon={faSun} />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="인천국제공항고속도로" total={234} color="error" icon={faSun} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="용인서울고속도로" total={234} color="error" icon={faSun} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="봉담동탄고속도로" total={234} color="error" icon={faSun} />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="제2외곽선" total={234} color="error" icon={faSun} />
           </Grid>
         
           <Grid item xs={12} md={6} lg={8}>
@@ -114,29 +118,51 @@ export default function TrafficWeatherPage() {
 
 
           <Grid item xs={12} md={6} lg={4}>
-          <AppOrderTimeline
-              title="교통속도 오름차순"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  '맑음, 17°C',
-                  '눈, -3°C',
-                  '맑음, 20°C',
-                  '맑음, 29°C',
-                  '맑음, 17°C',
-                ][index],
-                type: `order${index + 1}`,
-                time: [
-                '2022-07-31T01:33:29.567Z',
-                '2025-07-31T01:33:29.567Z',
-                '2021-07-31T01:33:29.567Z',
-                '2022-07-31T01:33:29.567Z',
-                '2022-07-31T01:33:29.567Z'][index],
-              }))}
-            />
+            <AppWidgetSummary title="내일 서울의 예상 통행속도" total={25.7} icon={faCloud} />
           </Grid>
 
         </Grid>
+
+        <Grid item xs={12} md={6} lg={8}>
+            <AppWebsiteVisits
+              title="서울시 월별 날씨, 통행량 평균"
+              subheader=""
+              chartLabels={[
+                '07/01/2022',
+                '08/01/2022',
+                '09/01/2022',
+                '10/01/2022',
+                '11/01/2022',
+                '12/01/2022',
+                '01/01/2023',
+                '02/01/2023',
+                '03/01/2023',
+                '04/01/2023',
+                '05/01/2023'
+              ]}
+              chartData={[
+                {
+                  name: '통행량 평균',
+                  type: 'column',
+                  fill: 'solid',
+                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                },
+                {
+                  name: '최고기온 평균',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                },
+                {
+                  name: '최저기온 평균',
+                  type: 'line',
+                  fill: 'solid',
+                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                },
+              ]}
+            />
+          </Grid>
+
       </Container>
     </>
   );

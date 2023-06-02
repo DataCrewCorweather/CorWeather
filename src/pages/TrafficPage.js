@@ -1,21 +1,12 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 
-// components
-import Iconify from '../components/iconify';
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppTrafficBySite,
-  AppWidgetSummary,
-  AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
@@ -35,8 +26,8 @@ export default function TrafficPage() {
         </Typography>
 
         <Grid container spacing={3}>
-          
           <Grid item xs={12} md={6} lg={4}>
+            {/* 고속도로 데이터에서 각 시간 데이터 6시간씩 합쳐서 평균값 구하기  */}
             <AppCurrentVisits
               title="시간대별 고속도로 통행량"
               chartData={[
@@ -56,6 +47,7 @@ export default function TrafficPage() {
 
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
+            // $dayOfWeek를 통해 요일별로 분류한 후 전일합계량 평균값 구하기
               title="요일별 고속도로 통행량 평균"
               subheader="2022.05.07~2023.5.28"
               chartData={[
@@ -72,6 +64,7 @@ export default function TrafficPage() {
 
           <Grid item xs={12} md={8} lg={12}>
             <AppConversionRates
+            // 각 노선명당 전일합계 평균값
               title="고속도로 노선별 일일 평균 통행량"
               subheader="2022.05.07~2023.5.28"
               chartData={[
@@ -101,6 +94,7 @@ export default function TrafficPage() {
           
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
+            // 지하철 승차수 월별 평균
               title="월별 지하철 이용량"
               subheader=""
               chartLabels={[
@@ -129,7 +123,8 @@ export default function TrafficPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="호선별 5월 이용객 수 평균"
+            // 4월 데이터 호선별 승차수 평균
+              title="호선별 4월 이용객 수 평균"
               chartData={[
                 { label: '1호선', value: 4344 },
                 { label: '2호선', value: 5435 },
