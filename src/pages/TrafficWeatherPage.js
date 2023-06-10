@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { Grid, Container, Typography } from '@mui/material';
-
+import axios from "axios";
+import { useState, useEffect } from 'react';
 // components
 import { faCloud, faCloudRain, faSun, faSnowflake } from '@fortawesome/free-solid-svg-icons'
 // sections
@@ -10,9 +11,159 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
+
+axios.defaults.withCredentials = true;
+const headers = { withCredentials: true };
 // ----------------------------------------------------------------------
 
 export default function TrafficWeatherPage() {
+
+  const weathers = ['흐림','맑음','비','눈','구름조금','구름많음','눈/비'];
+  const [weatherVelo,setweatherVelo] = useState({});
+  const [minTemp, setMinTemp] = useState({});
+  const [maxTemp, setMaxTemp] = useState({});
+  const [monthAvg, setMonthAvg] = useState({});
+  const days = [  '202207',
+  '202208',
+  '202209',
+  '202210',
+  '202211',
+  '202212',
+  '202301',
+  '202302',
+  '202303',
+  '202304',
+  '202305']
+
+  useEffect(() => {
+    
+
+    const fetchweatherVelo = async () => {
+      try {
+        const veloPromises = weathers.map(weather =>
+          axios.post("http://localhost:4000/traffic_weather/getweatherVelo", {
+            headers,
+            name2: weather
+          })
+        );
+        const weatherVeloResponses = await Promise.all(veloPromises);
+        const weatherVeloTemp = {};
+
+
+        weatherVeloResponses.forEach((response, index) => {
+          const velo = weathers[index];
+          const weatherVelodata = response.data.list;
+          if (weatherVelodata && weatherVelodata.length > 0) {
+
+            weatherVeloTemp[velo] = weatherVelodata[0].average;
+          } 
+        });
+
+        setweatherVelo(weatherVeloTemp);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
+    const fetchMaxVelo = async () => {
+      try {
+        const maxPromises = days.map(day =>
+          axios.post("http://localhost:4000/traffic_weather/getMaxVelo", {
+            headers,
+            date: day
+          })
+        );
+        const maxResponses = await Promise.all(maxPromises);
+        const maxTemp = {};
+
+
+        maxResponses.forEach((response, index) => {
+          const day = days[index];
+          const maxData = response.data.list;
+          if (maxData && maxData.length > 0) {
+            const max = maxData[0].maxTemp.toFixed(2);
+            console.log(max)
+
+            maxTemp[day] = max;
+          } 
+        });
+
+        setMaxTemp(maxTemp);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
+    const fetchMinVelo = async () => {
+      try {
+        const minPromises = days.map(day =>
+          axios.post("http://localhost:4000/traffic_weather/getMinVelo", {
+            headers,
+            date: day
+          })
+        );
+        const minResponses = await Promise.all(minPromises);
+        const minTemp = {};
+
+
+        minResponses.forEach((response, index) => {
+          const day = days[index];
+          const minData = response.data.list;
+          if (minData && minData.length > 0) {
+            const min = minData[0].minTemp.toFixed(2);
+            console.log(min)
+
+            minTemp[day] = min;
+          } 
+        });
+
+        setMinTemp(minTemp);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+
+    const fetchMonthavg = async () => {
+      try {
+        const avgPromises = days.map(day =>
+          axios.post("http://localhost:4000/traffic_weather/getMonthAvg", {
+            headers,
+            date: day
+          })
+        );
+        const avgResponses = await Promise.all(avgPromises);
+        const avgs = {};
+
+
+        avgResponses.forEach((response, index) => {
+          const day = days[index];
+          const avgData = response.data.list;
+          if (avgData && avgData.length > 0) {
+            const avg = avgData[0].avg.toFixed(2);
+            console.log(avg)
+
+            avgs[day] = avg;
+          } 
+        });
+
+        setMonthAvg(avgs);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMonthavg();
+    fetchMinVelo();
+    fetchweatherVelo();
+    fetchMaxVelo();
+  }, []);
+
+
+
+
 
   return (
     <>
@@ -109,12 +260,7 @@ export default function TrafficWeatherPage() {
             // 날씨교통 서울시 데이터 이용 -> 각 날씨별 평균 통행속도
               title="날씨별 통행속도"
               subheader=""
-              chartData={[
-                { label: '맑음', value: 400 },
-                { label: '비', value: 430 },
-                { label: '눈', value: 448 },
-        
-              ]}
+              chartData={weathers.map(weather => ({ label: weather, value: weatherVelo[weather] || '100'}))}
             />
           </Grid>
 
@@ -149,19 +295,19 @@ export default function TrafficWeatherPage() {
                   name: '통행량 평균',
                   type: 'column',
                   fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
+                  data: days.map(day => monthAvg[day])
                 },
                 {
                   name: '최고기온 평균',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: days.map(day => maxTemp[day])
                 },
                 {
                   name: '최저기온 평균',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: days.map(day => minTemp[day])
                 },
               ]}
             />
