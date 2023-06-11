@@ -34,22 +34,25 @@ export default function WeatherPage() {
   const [minTemp, setMinTemp] = useState({});
   const [maxTemp, setMaxTemp] = useState({});
   const [cnt, setCnt] = useState({});
+  const [weatherWarning, setweatherWarning] = useState({});
+  const [weatherWarning2, setweatherWarning2] = useState({});
 
   const days = [
-    '2022-07',
-    '2022-08',
-    '2022-09',
-    '2022-10',
-    '2022-11',
-    '2022-12',
-    '2023-01',
-    '2023-02',
-    '2023-03',
-    '2023-04',
-    '2023-05',
+    '2022.07',
+    '2022.08',
+    '2022.09',
+    '2022.10',
+    '2022.11',
+    '2022.12',
+    '2023.01',
+    '2023.02',
+    '2023.03',
+    '2023.04',
+    '2023.05',
   ];
   
   const cities = ['서울', '부산', '인천', '대구', '대전', '광주', '울산', '수원', '원주', '청주', '홍성', '전주', '목포', '포항', '진주', '제주'];
+  const iters = [1,2,3,4,5];
   useEffect(() => {
     
 
@@ -59,7 +62,7 @@ export default function WeatherPage() {
           axios.post("http://localhost:4000/weather/getWeatherList", {
             headers,
             name: city,
-            date: "2022-05-21"
+            date: "2022.05.21"
           })
         );
         const temperatureResponses = await Promise.all(temperaturePromises);
@@ -118,7 +121,7 @@ export default function WeatherPage() {
           axios.post("http://localhost:4000/weather/getDayrain", {
             headers,
             name: city,
-            date: "2022-05-21"
+            date: "2022.05.21"
           })
         );
         const rainResponses = await Promise.all(rainPromises);
@@ -205,20 +208,26 @@ export default function WeatherPage() {
       try {
         const cntResponse = await axios.post("http://localhost:4000/weather/getWeatherRate", {
           headers,
-          date: '2023-05'
+          date: '2023.05'
         });
         const cntData = cntResponse.data.list;
         console.log(cntData);
         const cnt = {};
     
         if (cntData && cntData.length > 0) {
-          const count1 = cntData[0].count;
-          console.log("Count 1:", count1);
+          const count1 = cntData[0].day_rain_count;
+          console.log(count1)
           cnt[0] = count1;
     
-          const count2 = cntData[1].count;
-          console.log("Count 2:", count2);
+          const count2 = cntData[0].day_snow_count;
+          console.log(count2)
           cnt[1] = count2;
+
+          const count3 = cntData[0].day_sunny_count;
+          console.log(count3)
+          cnt[2] = count3;
+
+
         }
     
         setCnt(cnt);
@@ -227,12 +236,52 @@ export default function WeatherPage() {
       }
     };
 
+    const fetchWeatherwarning = async() => {
+      try{
+
+          const weatherWarningResponse = await axios.post("http://localhost:4000/weather_warning/getWeather_warning",{
+            headers,
+            date:'2023-06-11'
+          })
+
+
+        const warningTime = {};
+        const warningContext = {};
+
+        const weatherWarningData = weatherWarningResponse.data.list;
+        if(weatherWarningData && weatherWarningData.length > 0){
+          warningTime[0] = weatherWarningData[0].time
+          warningContext[0] = weatherWarningData[0].location + weatherWarningData[0].context
+          
+          warningTime[1] = weatherWarningData[1].time
+          warningContext[1] = weatherWarningData[1].location + weatherWarningData[0].context
+
+          warningTime[2] = weatherWarningData[2].time
+          warningContext[2] = weatherWarningData[2].location + weatherWarningData[0].context
+
+          warningTime[3] = weatherWarningData[3].time
+          warningContext[3] = weatherWarningData[3].location + weatherWarningData[0].context
+
+          warningTime[4] = weatherWarningData[4].time
+          warningContext[4] = weatherWarningData[4].location + weatherWarningData[0].context
+
+  
+        }
+
+
+        setweatherWarning(warningTime);
+        setweatherWarning2(warningContext);
+      } catch(error){
+        console.error(error);
+      }
+    };
 
     fetchTemperatures();
     fetchRain();
     fetchMinTemp();
     fetchMaxTemp();
     fetchCntWeather();
+    fetchWeatherwarning();
   }, []);
 
   console.log(cnt)
@@ -308,9 +357,9 @@ export default function WeatherPage() {
             <AppCurrentVisits
               title="5월 날씨 비중"
               chartData={[
-                { label: '비', value: cnt[0] || 'N/A' },
-                { label: '맑음', value: cnt[1] || 'N/A' },
-                { label: '눈', value: 0 },
+                { label: '비', value: cnt[0] || 0 },
+                { label: '맑음', value: cnt[2] || 0 },
+                { label: '눈', value: cnt[1] || 0},
 
               ]}
               chartColors={[
@@ -336,20 +385,9 @@ export default function WeatherPage() {
               title="기상특보"
               list={[...Array(5)].map((_, index) => ({
                 id: faker.datatype.uuid(),
-                title: [
-                  '강풍주의보',
-                  '풍랑주의보',
-                  '황사주의보',
-                  '폭염주의보',
-                  '건조주의보',
-                ][index],
+                title: weatherWarning2[index],
                 type: `order${index + 1}`,
-                time: [
-                '2022-07-31T01:33:29.567Z',
-                '2025-07-31T01:33:29.567Z',
-                '2021-07-31T01:33:29.567Z',
-                '2022-07-31T01:33:29.567Z',
-                '2022-07-31T01:33:29.567Z'][index],
+                time: weatherWarning[index],
               }))}
             />
           </Grid>

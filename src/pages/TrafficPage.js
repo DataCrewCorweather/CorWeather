@@ -23,6 +23,7 @@ export default function TrafficPage() {
   const [monthAvg,setmonthAvg] = useState({});
   const [subAvg,setsubAvg] = useState({});
   const [linevalue,setline] = useState({});
+  const [dayvalue,setday] = useState({});
   const times = ['0','6','12','18'];
   const roads = [
     '경부고속도로',
@@ -176,10 +177,36 @@ export default function TrafficPage() {
       }
     };
 
+    const fetchDayofweek = async () => {
+      try {
+        const dayResponse = await axios.post("http://localhost:4000/traffic/getDayofweek", {
+          headers,
+        });
+        const dayData = dayResponse.data.list;
+        console.log(dayData);
+        const day = {};
+    
+        if (dayData && dayData.length > 0) {
+          day[0] = dayData[0].average_all_sum.toFixed(2)
+          day[1] = dayData[1].average_all_sum.toFixed(2)
+          day[2] = dayData[2].average_all_sum.toFixed(2)
+          day[3] = dayData[3].average_all_sum.toFixed(2)
+          day[4] = dayData[4].average_all_sum.toFixed(2)
+          day[5] = dayData[5].average_all_sum.toFixed(2)
+          day[6] = dayData[6].average_all_sum.toFixed(2)
+        }
+    
+        setday(day);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchTimeTraffic();
     fetchMonthavg();
     fetchsubAvg();
     fetchlines();
+    fetchDayofweek();
   }, []);
 
 
@@ -221,13 +248,13 @@ export default function TrafficPage() {
               title="요일별 고속도로 통행량 평균"
               subheader="2022.05.07~2023.5.28"
               chartData={[
-                { label: '월', value: 400 },
-                { label: '화', value: 430 },
-                { label: '수', value: 448 },
-                { label: '목', value: 470 },
-                { label: '금', value: 540 },
-                { label: '토', value: 580 },
-                { label: '일', value: 690 },
+                { label: '월', value: dayvalue[1] || 0 },
+                { label: '화', value: dayvalue[2] || 0 },
+                { label: '수', value: dayvalue[3] || 0 },
+                { label: '목', value: dayvalue[4] || 0 },
+                { label: '금', value: dayvalue[5] || 0 },
+                { label: '토', value: dayvalue[6] || 0 },
+                { label: '일', value: dayvalue[0] || 0 },
               ]}
             />
           </Grid>

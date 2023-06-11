@@ -23,17 +23,23 @@ export default function TrafficWeatherPage() {
   const [minTemp, setMinTemp] = useState({});
   const [maxTemp, setMaxTemp] = useState({});
   const [monthAvg, setMonthAvg] = useState({});
-  const days = [  '202207',
-  '202208',
-  '202209',
-  '202210',
-  '202211',
-  '202212',
-  '202301',
-  '202302',
-  '202303',
-  '202304',
-  '202305']
+  const [joinAvg, setJoinavg] = useState({});
+  const [weatherIcon, setweathericon] = useState({});
+  const [colors, setColor] = useState({});
+  const [preWeather, setpreWeather] = useState({});
+  const days = [  '2022.7',
+  '2022.8',
+  '2022.9',
+  '2022.10',
+  '2022.11',
+  '2022.12',
+  '2023.1',
+  '2023.2',
+  '2023.3',
+  '2023.4',
+  '2023.5']
+
+  const loads = ['경부고속도로','서해안고속도로','영동고속도로','수도권제1순환고속도로','경인고속도로','용인서울고속도로']
 
   useEffect(() => {
     
@@ -155,13 +161,171 @@ export default function TrafficWeatherPage() {
       }
     };
 
+    const fetchJoindata = async () => {
+      try {
+        const preResponse = await axios.post("http://localhost:4000/pre_weather/getpreWeather", {
+          headers,
+        });
+        const preData = preResponse.data.list;
+        console.log(preData);
+        let pre = '';
+        const preWeather = {};
+    
+        if (preData && preData.length > 0) {
+          preWeather[0] = preData[0].weather
+          pre = preData[0].weather
+          setpreWeather(preWeather)
+        }
+        console.log(pre);
+
+        if (pre === '맑음'){
+
+
+
+
+
+          const joinPromises = loads.map(load =>
+            axios.post("http://localhost:4000/traffic/getJoindata", {
+              headers,
+              name: load,
+              weather: pre
+            })
+          );
+          const joinResponses = await Promise.all(joinPromises);
+          const joinAvg = {};
+          const icon = {};
+          const a = {};
+
+          joinResponses.forEach((response, index) => {
+            const load = loads[index];
+            const joinData = response.data.list;
+            if (joinData && joinData.length > 0) {
+
+              joinAvg[load] = joinData[0].average_all_sum;
+              setJoinavg(joinAvg);
+
+              icon[load] = faSun;
+              setweathericon(icon);
+
+              a[load] = 'warning';
+              setColor(a);
+            } 
+          });
+        }
+        else if(pre==='구름조금'){
+
+
+
+
+          const joinPromises = loads.map(load =>
+            axios.post("http://localhost:4000/traffic/getJoindata", {
+              headers,
+              name: load,
+              weather: pre
+            })
+          );
+          const joinResponses = await Promise.all(joinPromises);
+          const joinAvg = {};
+          const icon = {};
+          const a = {};
+
+          joinResponses.forEach((response, index) => {
+            const load = loads[index];
+            const joinData = response.data.list;
+            if (joinData && joinData.length > 0) {
+ 
+              joinAvg[load] = joinData[0].average_all_sum;
+              setJoinavg(joinAvg);
+
+              icon[load] = faCloudRain;
+              setweathericon(icon);
+
+              a[load] = 'info';
+              setColor(a);
+            } 
+          });
+
+        }
+        else if(pre==='구름많음'){
+
+
+
+          const joinPromises = loads.map(load =>
+            axios.post("http://localhost:4000/traffic/getJoindata", {
+              headers,
+              name: load,
+              weather: pre
+            })
+          );
+          const joinResponses = await Promise.all(joinPromises);
+          const joinAvg = {};
+          const icon = {};
+          const a = {};
+
+          joinResponses.forEach((response, index) => {
+            const load = loads[index];
+            const joinData = response.data.list;
+            if (joinData && joinData.length > 0) {
+
+              joinAvg[load] = joinData[0].average_all_sum;
+              setJoinavg(joinAvg);
+
+              icon[load] = faCloudRain;
+              setweathericon(icon);
+
+              a[load] = 'info';
+              setColor(a);
+            } 
+          });
+        }
+        else if(pre==='흐림'){
+
+
+
+          const joinPromises = loads.map(load =>
+            axios.post("http://localhost:4000/traffic/getJoindata", {
+              headers,
+              name: load,
+              weather: pre
+            })
+          );
+          const joinResponses = await Promise.all(joinPromises);
+          const joinAvg = {};
+          const icon = {};
+          const a = {};
+
+          joinResponses.forEach((response, index) => {
+            const load = loads[index];
+            const joinData = response.data.list;
+            if (joinData && joinData.length > 0) {
+
+              joinAvg[load] = joinData[0].average_all_sum.toFixed(2);
+              setJoinavg(joinAvg);
+
+              icon[load] = faCloud;
+              setweathericon(icon);
+
+              a[load] = 'info';
+              setColor(a);
+            } 
+          });
+        }
+    
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    
+    fetchJoindata();
     fetchMonthavg();
     fetchMinVelo();
     fetchweatherVelo();
     fetchMaxVelo();
   }, []);
 
-
+  console.log(joinAvg);
 
 
 
@@ -178,83 +342,16 @@ export default function TrafficWeatherPage() {
         {/* 날씨 아이콘: 예상 날씨(발표전날 수정), total -> 예상 이용량  */}
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경부고속도로" total={25.7} icon={faCloud} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="서해안고속도로" total={1352831} color="info" icon={faCloudRain} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="평택시흥고속도로" total={1723315} color="warning" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="평택화성고속도로" total={234} color="error" icon={faSnowflake} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="구리포천선" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="중부고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="제2중부고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-          
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="평택제천고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="중부내륙고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="영동고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="광주원주선" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="서울양양고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="수도권제1순환선" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="제2경인고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="인천대교고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="경인고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="인천국제공항고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="용인서울고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="봉담동탄고속도로" total={234} color="error" icon={faSun} />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="제2외곽선" total={234} color="error" icon={faSun} />
-          </Grid>
-        
+          {loads.map(load => (
+            <Grid item xs={12} sm={6} md={3} key={load}>
+              <AppWidgetSummary
+                title={load || 'N/A'}
+                total={joinAvg[load] || 'N/A'}
+                color= {colors[load] || 'info'}
+                icon={weatherIcon[load] || faCloud}
+              />
+            </Grid>
+          ))}
           <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
             // 날씨교통 서울시 데이터 이용 -> 각 날씨별 평균 통행속도
@@ -267,7 +364,8 @@ export default function TrafficWeatherPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             {/* 날씨교통 데이터를 기반으로한 서울 예상 통행속도 */}
-            <AppWidgetSummary title="내일 서울의 예상 통행속도" total={25.7} icon={faCloud} />
+            {/* 어떤 고속도로든 당일 서울 날씨를 사용하기에 다른 데이터에서 사용하는 날씨예보 정보를 가져옴 */}
+            <AppWidgetSummary title="내일 서울의 예상 통행속도" total={weatherVelo[preWeather[0]]} icon={weatherIcon['경부고속도로'] || faCloud } color= {colors['경부고속도로'] || 'info'}/>
           </Grid>
 
         </Grid>
